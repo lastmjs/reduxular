@@ -17,6 +17,9 @@ export {
     compose
 };
 
+const setInternalPrefix: 'set_internal_' = 'set_internal_';
+const setExternalPrefix: 'set_external_' = 'set_external_';
+
 type Store<T, A extends Action> = {
     - readonly [P in keyof T]: T[P];
 } & ReduxStore<T, A>;
@@ -47,7 +50,7 @@ export function createObjectStore<T extends Object, A extends Action>(
             },
             set (val) {
                 (reduxStore.dispatch as any)({
-                    type: `SET_${key.toString().toUpperCase()}`,
+                    type: `${setExternalPrefix}${key}`,
                     value: val
                 });    
             }
@@ -79,7 +82,7 @@ export function createObjectStore<T extends Object, A extends Action>(
         set: (obj, prop, value) => {
 
             (reduxStore.dispatch as any)({
-                type: `SET_${prop.toString().toUpperCase()}`,
+                type: `${setInternalPrefix}${prop.toString()}`,
                 value
             });
 
@@ -90,8 +93,11 @@ export function createObjectStore<T extends Object, A extends Action>(
 
 function setterReducer<T, A extends Action>(state: T, action: A): T {
 
-    if (action.type.startsWith('SET_')) {
-        const prop = action.type.replace('SET_', '').toLowerCase();
+    if (
+        action.type.startsWith(setInternalPrefix) ||
+        action.type.startsWith(setExternalPrefix)
+    ) {
+        const prop = action.type.replace(setInternalPrefix, '').replace(setExternalPrefix, '');
         return {
             ...state,
             [prop]: (action as any).value

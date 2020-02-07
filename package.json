@@ -4,7 +4,7 @@
   "description": "",
   "main": "reduxular.ts",
   "scripts": {
-    "test": "zwitterion --port 5555 --disable-spa"
+    "test": "zwitterion --port 5555 --spa-root test/index.html"
   },
   "repository": {
     "type": "git",
