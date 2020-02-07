@@ -1,0 +1,30 @@
+{
+  "name": "reduxular",
+  "version": "0.0.0",
+  "description": "",
+  "main": "reduxular.ts",
+  "scripts": {
+    "test": "zwitterion --port 5555 --disable-spa"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lastmjs/reduxular.git"
+  },
+  "keywords": [],
+  "contributors": [
+    "Jordan Last <jordan.michael.last@gmail.com>",
+    "electrovir"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lastmjs/reduxular/issues"
+  },
+  "homepage": "https://github.com/lastmjs/reduxular#readme",
+  "dependencies": {
+    "redux": "4.0.5"
+  },
+  "devDependencies": {
+    "lit-html": "1.1.2",
+    "zwitterion": "0.44.2"
+  }
+}
