@@ -17,7 +17,9 @@ export {
     compose
 };
 
-export {ReduxularElement} from './reduxular-element';
+export {
+    ReduxularElement
+} from './reduxular-element';
 
 const setInternalPrefix: 'set_internal_' = 'set_internal_';
 const setExternalPrefix: 'set_external_' = 'set_external_';

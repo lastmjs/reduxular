@@ -1,5 +1,12 @@
-import {createObjectStore, Store, ReduxularListener} from './reduxular';
-import {Reducer, Action} from 'redux';
+import {
+    createObjectStore,
+    Store,
+    ReduxularListener
+} from './reduxular';
+import {
+    Reducer,
+    Action
+} from 'redux';
 
 export class ReduxularElement<State extends Object, A extends Action = any> extends HTMLElement {
     readonly store: Store<State, A>;
