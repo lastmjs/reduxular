@@ -6,6 +6,7 @@ import {
     createObjectStore
 } from '../../reduxular'; 
 import './reduxular-test';
+import './reduxular-element-test';
 
 type State = {
     readonly count: number;
@@ -51,6 +52,7 @@ class ReduxularApp extends HTMLElement {
             }) }>Double increment</button>
 
             <reduxular-test .count=${state.count}></reduxular-test>
+            <reduxular-element-test .count=${state.count}></reduxular-element-test>
         `;
     }
 }
