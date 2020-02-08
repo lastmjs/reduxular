@@ -17,16 +17,20 @@ export {
     compose
 };
 
+export {ReduxularElement} from './reduxular-element';
+
 const setInternalPrefix: 'set_internal_' = 'set_internal_';
 const setExternalPrefix: 'set_external_' = 'set_external_';
 
-type Store<T, A extends Action> = {
+export type Store<T, A extends Action> = {
     - readonly [P in keyof T]: T[P];
 } & ReduxStore<T, A>;
 
+export type ReduxularListener<T> = (state: T) => any;
+
 export function createObjectStore<T extends Object, A extends Action>(
     initialState: T,
-    listener: (state: T) => any,
+    listener: ReduxularListener<T>,
     object: Object,
     reducer?: Reducer<T, A>
 ): Store<T, A> {
