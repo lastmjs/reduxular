@@ -24,7 +24,7 @@ class ReduxularTest extends HTMLElement {
         console.log('test state', state);
 
         return html`
-            <div>${state.count}</div>
+            <div>reduxular-test: ${state.count}</div>
         `;
     }
 }

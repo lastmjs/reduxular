@@ -20,9 +20,7 @@ class ReduxularElementTest extends ReduxularElement<State> {
         console.log('test reduxular element', state, this.store.count);
 
         return html`
-            Reduxular Element
-            <br />
-            <span>${state.count}</span>
+            <div>reduxular-element-test: ${state.count}</div>
         `;
     }
 }

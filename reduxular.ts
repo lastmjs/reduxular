@@ -30,6 +30,11 @@ export type Store<T, A extends Action> = {
 
 export type ReduxularListener<T> = (state: T) => any;
 
+type GetterOrSetterAlreadyPresentResult = {
+    readonly object: Object;
+    readonly alreadySet: boolean;
+};
+
 export function createObjectStore<T extends Object, A extends Action>(
     initialState: T,
     listener: ReduxularListener<T>,
@@ -50,16 +55,26 @@ export function createObjectStore<T extends Object, A extends Action>(
     });
 
     Object.keys(initialState).forEach((key) => {
-        Object.defineProperty(object, key, {
-            get () {
-                return reduxStore.getState()[key];
-            },
-            set (val) {
-                (reduxStore.dispatch as any)({
-                    type: `${setExternalPrefix}${key}`,
-                    value: val
-                });    
-            }
+
+        const getterAlreadyPresentResult: Readonly<GetterOrSetterAlreadyPresentResult> = getGetterOrSetterAlreadyPresent(object, key, 'get');
+        const setterAlreadyPresentResult: Readonly<GetterOrSetterAlreadyPresentResult> = getGetterOrSetterAlreadyPresent(object, key, 'set');
+
+        const objectToOverride: Object = getterAlreadyPresentResult.alreadySet === true ? getterAlreadyPresentResult.object : setterAlreadyPresentResult.alreadySet === true ? setterAlreadyPresentResult.object : object;
+
+        Object.defineProperty(objectToOverride, key, {
+            ...(getterAlreadyPresentResult.alreadySet === false ? {
+                get () {
+                    return reduxStore.getState()[key];
+                }
+            }: {}),
+            ...(setterAlreadyPresentResult.alreadySet === false ? {
+                set (val) {
+                    (reduxStore.dispatch as any)({
+                        type: `${setExternalPrefix}${key}`,
+                        value: val
+                    });    
+                }
+            } : {})
         });
     });
 
@@ -111,4 +126,39 @@ function setterReducer<T, A extends Action>(state: T, action: A): T {
     }
 
     return state;
+}
+
+function getGetterOrSetterAlreadyPresent(
+    object: Object, 
+    key: string, 
+    getOrSet: 'get' | 'set'
+): Readonly<GetterOrSetterAlreadyPresentResult> {
+
+    const ownPropertyDescriptor: Readonly<PropertyDescriptor> = Object.getOwnPropertyDescriptor(object, key);
+
+    if (
+        ownPropertyDescriptor &&
+        ownPropertyDescriptor[getOrSet]
+    ) {
+        return {
+            object,
+            alreadySet: true
+        };
+    }
+    else {
+        const prototype: Object = Object.getPrototypeOf(object);
+    
+        if (
+            prototype === null ||
+            prototype === undefined
+        ) {
+            return {
+                object: prototype,
+                alreadySet: false
+            };
+        }
+        else {
+            return getGetterOrSetterAlreadyPresent(prototype, key, getOrSet);
+        }
+    }
 }
