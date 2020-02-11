@@ -8,6 +8,7 @@ import {
 import './reduxular-test';
 import './reduxular-element-test';
 import './reduxular-setters-getters-test';
+import './reduxular-element-setters-getters-test';
 
 type State = {
     readonly count: number;
@@ -55,6 +56,7 @@ class ReduxularApp extends HTMLElement {
             <reduxular-test .count=${state.count}></reduxular-test>
             <reduxular-element-test .count=${state.count}></reduxular-element-test>
             <reduxular-setters-getters-test .count=${state.count}></reduxular-setters-getters-test>
+            <reduxular-element-setters-and-getters-test .count=${state.count}></reduxular-element-setters-and-getters-test>
         `;
     }
 }

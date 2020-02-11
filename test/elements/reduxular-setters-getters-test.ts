@@ -20,7 +20,7 @@ class ReduxularSettersGettersTest extends HTMLElement {
         this
     );
 
-    set count(count) {
+    set count(count: number) {
         console.log('set count', count);
         this.store.count = count;
     }
