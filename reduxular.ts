@@ -4,7 +4,6 @@ import {
     applyMiddleware,
     bindActionCreators,
     compose,
-    Reducer,
     Action,
     Store as ReduxStore
 } from 'redux';
@@ -35,11 +34,17 @@ type GetterOrSetterAlreadyPresentResult = {
     readonly alreadySet: boolean;
 };
 
+// Required because the default redux Reducer type allows S to be undefined. We do not.
+type ReduxularReducer<S, A> = (
+    state: S,
+    action: A
+  ) => S;
+  
 export function createObjectStore<T extends Object, A extends Action>(
     initialState: T,
     listener: ReduxularListener<T>,
     object: Object,
-    reducer?: Reducer<T, A>
+    reducer?: ReduxularReducer<T, A>
 ): Store<T, A> {
 
     const reduxStore = createStore((state: T = initialState, action: A) => {
@@ -64,7 +69,7 @@ export function createObjectStore<T extends Object, A extends Action>(
         Object.defineProperty(objectToOverride, key, {
             ...(getterAlreadyPresentResult.alreadySet === false ? {
                 get () {
-                    return reduxStore.getState()[key];
+                    return reduxStore.getState()[key as keyof T];
                 }
             }: {}),
             ...(setterAlreadyPresentResult.alreadySet === false ? {
@@ -93,12 +98,17 @@ export function createObjectStore<T extends Object, A extends Action>(
         ...initialState
     }, {
         get: (obj, prop) => {
-            if (reduxStore[prop]) {
-                return reduxStore[prop];
+            if (reduxStore.hasOwnProperty(prop)) {
+                return reduxStore[prop as keyof typeof reduxStore];
             }
-            else {
-                return reduxStore.getState()[prop];
+            
+            const state: Readonly<T> = reduxStore.getState();
+            
+            if (state.hasOwnProperty(prop)) {
+                return state[prop as keyof typeof state];
             }
+            
+            throw new Error(`Property "${prop.toString()}" not present in store or state.`);
         },
         set: (obj, prop, value) => {
 
@@ -134,7 +144,7 @@ function getGetterOrSetterAlreadyPresent(
     getOrSet: 'get' | 'set'
 ): Readonly<GetterOrSetterAlreadyPresentResult> {
 
-    const ownPropertyDescriptor: Readonly<PropertyDescriptor> = Object.getOwnPropertyDescriptor(object, key);
+    const ownPropertyDescriptor: Readonly<PropertyDescriptor>|undefined = Object.getOwnPropertyDescriptor(object, key);
 
     if (
         ownPropertyDescriptor &&
