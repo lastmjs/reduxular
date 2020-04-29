@@ -40,22 +40,22 @@ type ReduxularReducer<S, A> = (
     action: A
   ) => S;
   
-export function createObjectStore<T extends Object, A extends Action>(
-    initialState: T,
-    listener: ReduxularListener<T>,
+export function createObjectStore<StateGeneric extends Object, A extends Action>(
+    initialState: Required<StateGeneric>,
+    listener: ReduxularListener<StateGeneric>,
     object: Object,
-    reducer?: ReduxularReducer<T, A>
-): Store<T, A> {
+    reducer?: ReduxularReducer<StateGeneric, A>
+): Store<StateGeneric, A> {
 
-    const reduxStore = createStore((state: T = initialState, action: A) => {
+    const reduxStore = createStore((state: StateGeneric = initialState, action: A) => {
         if (
             reducer !== null &&
             reducer !== undefined
         ) {
-            return setterReducer<T, A>(reducer(state, action), action);
+            return setterReducer<StateGeneric, A>(reducer(state, action), action);
         }
         else {
-            return setterReducer<T, A>(state, action);
+            return setterReducer<StateGeneric, A>(state, action);
         }
     });
 
@@ -69,7 +69,7 @@ export function createObjectStore<T extends Object, A extends Action>(
         Object.defineProperty(objectToOverride, key, {
             ...(getterAlreadyPresentResult.alreadySet === false ? {
                 get () {
-                    return reduxStore.getState()[key as keyof T];
+                    return reduxStore.getState()[key as keyof StateGeneric];
                 }
             }: {}),
             ...(setterAlreadyPresentResult.alreadySet === false ? {
@@ -102,7 +102,7 @@ export function createObjectStore<T extends Object, A extends Action>(
                 return reduxStore[prop as keyof typeof reduxStore];
             }
             
-            const state: Readonly<T> = reduxStore.getState();
+            const state: Readonly<StateGeneric> = reduxStore.getState();
             
             if (state.hasOwnProperty(prop)) {
                 return state[prop as keyof typeof state];
@@ -111,7 +111,6 @@ export function createObjectStore<T extends Object, A extends Action>(
             throw new Error(`Property "${prop.toString()}" not present in store or state.`);
         },
         set: (obj, prop, value) => {
-
             (reduxStore.dispatch as any)({
                 type: `${setInternalPrefix}${prop.toString()}`,
                 value
