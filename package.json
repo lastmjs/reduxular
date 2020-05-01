@@ -1,6 +1,6 @@
 {
   "name": "reduxular",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "license": "MIT",
   "repository": {
@@ -13,7 +13,7 @@
   "homepage": "https://github.com/lastmjs/reduxular#readme",
   "contributors": [
     "Jordan Last <jordan.michael.last@gmail.com>",
-    "electrovir"
+    "electrovir <electrovir@users.noreply.github.com>"
   ],
   "keywords": [],
   "main": "dist/reduxular.js",
